@@ -1,0 +1,139 @@
+
+CREATE TABLE public.Instrument (
+                Instrument_name VARCHAR NOT NULL,
+                Pitch VARCHAR NOT NULL,
+                CONSTRAINT name PRIMARY KEY (Instrument_name)
+);
+
+
+CREATE TABLE public.Address (
+                AddressID INTEGER NOT NULL,
+                Number INTEGER NOT NULL,
+                Street_1 VARCHAR NOT NULL,
+                Street_2 VARCHAR NOT NULL,
+                City VARCHAR NOT NULL,
+                State VARCHAR NOT NULL,
+                ZipCode INTEGER NOT NULL,
+                Telephone INTEGER NOT NULL,
+                CONSTRAINT addressid PRIMARY KEY (AddressID)
+);
+
+
+CREATE TABLE public.Musician (
+                SSN INTEGER NOT NULL,
+                AddressID INTEGER NOT NULL,
+                name VARCHAR NOT NULL,
+                CONSTRAINT ssn PRIMARY KEY (SSN)
+);
+
+
+CREATE TABLE public.Album (
+                AlbumID INTEGER NOT NULL,
+                Album_title VARCHAR NOT NULL,
+                Release_Date DATE NOT NULL,
+                Format VARCHAR NOT NULL,
+                Age TIME NOT NULL,
+                Producer_SSN INTEGER NOT NULL,
+                CONSTRAINT albumid PRIMARY KEY (AlbumID)
+);
+
+
+CREATE TABLE public.Song (
+                Title VARCHAR NOT NULL,
+                Length INTEGER NOT NULL,
+                Author_SSN INTEGER NOT NULL,
+                AlbumID INTEGER NOT NULL,
+                CONSTRAINT title PRIMARY KEY (Title)
+);
+
+
+CREATE TABLE public.Performer_song (
+                Song_Title VARCHAR NOT NULL,
+                SSN INTEGER NOT NULL,
+                CONSTRAINT title PRIMARY KEY (Song_Title, SSN)
+);
+
+
+CREATE TABLE public.Instrument_song (
+                Instrument_name VARCHAR NOT NULL,
+                Song_Title VARCHAR NOT NULL,
+                CONSTRAINT title PRIMARY KEY (Instrument_name, Song_Title)
+);
+
+
+CREATE TABLE public.Instrument_musicians (
+                SSN INTEGER NOT NULL,
+                Instrument_name VARCHAR NOT NULL,
+                CONSTRAINT instrument_musicians_pk PRIMARY KEY (SSN, Instrument_name)
+);
+
+
+ALTER TABLE public.Instrument_musicians ADD CONSTRAINT instrument_instrument_musicians_fk
+FOREIGN KEY (Instrument_name)
+REFERENCES public.Instrument (Instrument_name)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Instrument_song ADD CONSTRAINT instrument_instrument_song_fk
+FOREIGN KEY (Instrument_name)
+REFERENCES public.Instrument (Instrument_name)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Musician ADD CONSTRAINT address_musician_fk
+FOREIGN KEY (AddressID)
+REFERENCES public.Address (AddressID)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Instrument_musicians ADD CONSTRAINT musician_instrument_musicians_fk
+FOREIGN KEY (SSN)
+REFERENCES public.Musician (SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Song ADD CONSTRAINT musician_song_fk
+FOREIGN KEY (Author_SSN)
+REFERENCES public.Musician (SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Performer_song ADD CONSTRAINT musician_performer_song_fk
+FOREIGN KEY (SSN)
+REFERENCES public.Musician (SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Album ADD CONSTRAINT musician_album_fk
+FOREIGN KEY (Producer_SSN)
+REFERENCES public.Musician (SSN)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Song ADD CONSTRAINT album_song_fk
+FOREIGN KEY (AlbumID)
+REFERENCES public.Album (AlbumID)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Instrument_song ADD CONSTRAINT song_instrument_song_fk
+FOREIGN KEY (Song_Title)
+REFERENCES public.Song (Title)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.Performer_song ADD CONSTRAINT song_performer_song_fk
+FOREIGN KEY (Song_Title)
+REFERENCES public.Song (Title)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
